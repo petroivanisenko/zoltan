@@ -51,20 +51,20 @@ export async function getFilteredProducts(
   if (searchQuery) where.name = { contains: searchQuery, mode: "insensitive" };
   if (ratingGte !== undefined) where.rating = { gte: ratingGte };
 
-  let orderBy: Prisma.ProductOrderByWithRelationInput = {};
+  let orderBy: Prisma.ProductOrderByWithRelationInput[] = [];
   switch (sortBy) {
     case "price_asc":
-      orderBy = { price: "asc" };
+      orderBy = [{ price: "asc" }, { id: "asc" }];
       break;
     case "price_desc":
-      orderBy = { price: "desc" };
+      orderBy = [{ price: "desc" }, { id: "asc" }];
       break;
     case "new":
-      orderBy = { createdAt: "desc" };
+      orderBy = [{ createdAt: "desc" }, { id: "asc" }];
       break;
     case "popular":
     default:
-      orderBy = { rating: "desc" };
+      orderBy = [{ rating: "desc" }, { id: "asc" }];
       break;
   }
 

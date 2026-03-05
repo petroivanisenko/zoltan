@@ -69,6 +69,8 @@ export default function CatalogueClient({
   const searchParams = useSearchParams();
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const currentSortBy = (searchParams.get("sortBy") ||
+    "popular") as FilterState["sortBy"];
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [totalProducts, setTotalProducts] = useState(
     initialTotal ?? initialProducts.length,
@@ -79,7 +81,7 @@ export default function CatalogueClient({
     categoryIds: currentCategory ? [currentCategory] : [],
     occasionIds: [],
     priceRange: [minPrice, maxPrice],
-    sortBy: "popular",
+    sortBy: currentSortBy,
   });
 
   const [debouncedPriceRange] = useDebounceValue(filterState.priceRange, 500);
@@ -88,9 +90,10 @@ export default function CatalogueClient({
     (pageNumber: number | string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set("page", pageNumber.toString());
+      params.set("sortBy", filterState.sortBy);
       return `${pathname}?${params.toString()}`;
     },
-    [pathname, searchParams],
+    [pathname, searchParams, filterState.sortBy],
   );
 
   const fetchFilteredProducts = useCallback(
@@ -136,11 +139,18 @@ export default function CatalogueClient({
     (updates: Partial<FilterState>, resetPage = true) => {
       setFilterState((prev) => ({ ...prev, ...updates }));
 
+      if (updates.sortBy) {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("sortBy", updates.sortBy);
+        if (resetPage) params.set("page", "1");
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+
       if (!updates.priceRange) {
         fetchFilteredProducts(resetPage);
       }
     },
-    [fetchFilteredProducts],
+    [fetchFilteredProducts, searchParams, pathname, router],
   );
 
   const resetFilters = useCallback(() => {
