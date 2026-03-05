@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import GoTop from "@/components/GoTop";
 import CookieConsent from "@/components/CookieConsent";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const onest = Onest({
   variable: "--font-onest",
@@ -33,6 +34,7 @@ export default function RootLayout({
           </div>
         </ThemeProvider>
       </body>
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />
     </html>
   );
 }
