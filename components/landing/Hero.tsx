@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/carousel";
 import { CpuIcon, Sparkles } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 
@@ -35,12 +34,10 @@ export default function Hero() {
               <CarouselItem key={index} className="h-[calc(100vh-68px)]">
                 <div className="relative w-full h-full">
                   <div className="absolute inset-0">
-                    <Image
+                    <img
                       src={image}
                       alt={`Tech Products ${index + 1}`}
-                      fill
-                      className="object-cover brightness-[0.4] transition-transform duration-5000 group-hover:scale-105"
-                      priority={index === 0}
+                      className="absolute inset-0 w-full h-full object-cover brightness-[0.4] transition-transform duration-5000 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/50" />
                   </div>

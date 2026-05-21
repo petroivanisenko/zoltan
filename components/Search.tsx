@@ -8,7 +8,6 @@ import { Product } from "@/generated/prisma";
 import { useOnClickOutside } from "usehooks-ts";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import Image from "next/image";
 import { resolvePublicImageUrl } from "@/lib/images";
 
 export default function Search() {
@@ -86,14 +85,10 @@ export default function Search() {
                 >
                   {product.image && (
                     <div className="size-18 relative shrink-0 overflow-hidden rounded-md mr-3">
-                      <Image
+                      <img
                         src={resolvePublicImageUrl(product.image) ?? ""}
                         alt={product.name}
-                        fill
-                        className="object-cover object-center"
-                        unoptimized={(
-                          resolvePublicImageUrl(product.image) ?? ""
-                        ).includes("localhost")}
+                        className="absolute inset-0 w-full h-full object-cover object-center"
                       />
                     </div>
                   )}

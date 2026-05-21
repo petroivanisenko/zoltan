@@ -8,7 +8,6 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Product } from "@/generated/prisma";
 import ProductQuantity from "./ProductQuantity";
-import Image from "next/image";
 import { resolvePublicImageUrl } from "@/lib/images";
 
 export default function CartItem({
@@ -34,13 +33,10 @@ export default function CartItem({
         onClick={onCartCloseAction}
         className={`relative ${compact ? "size-28" : "size-32"} rounded-md overflow-hidden shrink-0 bg-white`}
       >
-        <Image
+        <img
           src={imageSrc}
           alt={product.name}
-          fill
-          className="object-contain p-2"
-          sizes="(max-width: 768px) 112px, 128px"
-          unoptimized={imageSrc.includes("localhost")}
+          className="absolute inset-0 w-full h-full object-contain p-2"
         />
       </Link>
       <div

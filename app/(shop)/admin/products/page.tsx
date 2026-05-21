@@ -11,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
 import Link from "next/link";
 import { resolvePublicImageUrl } from "@/lib/images";
 
@@ -228,17 +227,13 @@ export default async function AdminProductsPage({
               <TableRow key={product.id}>
                 <TableCell>{product.id}</TableCell>
                 <TableCell>
-                  <div className="relative w-12 h-12 rounded overflow-hidden bg-muted">
-                    <Image
-                      src={resolvePublicImageUrl(product.image) ?? ""}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                      unoptimized={(
-                        resolvePublicImageUrl(product.image) ?? ""
-                      ).includes("localhost")}
-                    />
-                  </div>
+                    <div className="relative w-12 h-12 rounded overflow-hidden bg-muted">
+                      <img
+                        src={resolvePublicImageUrl(product.image) ?? ""}
+                        alt={product.name}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    </div>
                 </TableCell>
                 <TableCell className="font-medium" title={product.name}>
                   {product.name.substring(0, 30)}...

@@ -1,5 +1,4 @@
 import Rating from "@/components/shared/Rating";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProduct, getProducts, getSimilarProducts } from "@/actions/product";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +7,6 @@ import CopyLinkButton from "@/components/CopyLinkButton";
 import AddProduct from "@/components/shop/product/AddProduct";
 
 import { SetBreadcrumbs } from "@/components/SetBreadcrumbs";
-import Image from "next/image";
 import { getComments } from "@/actions/comments";
 import CommentCard from "@/components/shop/product/CommentCard";
 import NewComment from "@/components/shop/product/NewComment";
@@ -57,14 +55,10 @@ export default async function ProductPage({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="relative aspect-square overflow-hidden rounded-lg bg-white border">
-          <Image
+          <img
             src={imageSrc}
             alt={product.name}
-            fill
-            className="object-contain p-6 hover:scale-110 transition-transform duration-300"
-            sizes="(max-width: 1024px) 90vw, 45vw"
-            priority
-            unoptimized={imageSrc.includes("localhost")}
+            className="absolute inset-0 w-full h-full object-contain p-6 hover:scale-110 transition-transform duration-300"
           />
         </div>
 

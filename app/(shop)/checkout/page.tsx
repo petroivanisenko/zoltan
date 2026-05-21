@@ -24,7 +24,6 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { resolvePublicImageUrl } from "@/lib/images";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SetBreadcrumbs } from "@/components/SetBreadcrumbs";
 import { useCartStore } from "@/store/useCartStore";
@@ -339,14 +338,10 @@ export default function CheckoutPage() {
                     className="flex gap-3 pb-3 border-b"
                   >
                     <div className="relative w-16 h-16 shrink-0 rounded overflow-hidden">
-                      <Image
+                      <img
                         src={resolvePublicImageUrl(item.product.image) ?? ""}
                         alt={item.product.name}
-                        fill
-                        className="object-cover"
-                        unoptimized={(
-                          resolvePublicImageUrl(item.product.image) ?? ""
-                        ).includes("localhost")}
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1 min-w-0">

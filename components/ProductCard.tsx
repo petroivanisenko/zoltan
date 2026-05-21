@@ -16,7 +16,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import AddToCartButton from "./AddToCartButton";
-import Image from "next/image";
 import { resolvePublicImageUrl } from "@/lib/images";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -29,14 +28,10 @@ export default function ProductCard({ product }: { product: Product }) {
         className="hover:text-primary flex flex-col grow"
       >
         <div className="relative w-full aspect-square mb-4 bg-white rounded-t-lg overflow-hidden">
-          <Image
+          <img
             src={imageSrc}
             alt={product.name}
-            fill
-            className="object-contain p-4"
-            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            priority={false}
-            unoptimized={imageSrc.includes("localhost")}
+            className="absolute inset-0 w-full h-full object-contain p-4"
           />
         </div>
 
@@ -69,7 +64,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     <span className="text-sm text-muted-foreground line-through">
                       {Math.round(
                         product.price +
-                          (product.discount * product.price) / 100,
+                        (product.discount * product.price) / 100,
                       )}{" "}
                       €
                     </span>

@@ -1,6 +1,5 @@
 import { testimonials } from "@/constants";
 import { MessageCircleHeartIcon } from "lucide-react";
-import Image from "next/image";
 import Rating from "@/components/shared/Rating";
 import {
   Card,
@@ -38,7 +37,7 @@ export default function Testimonials() {
                 <div className="flex items-center">
                   {testimonial.avatar && (
                     <div className="mr-4 shrink-0">
-                      <Image
+                      <img
                         src={testimonial.avatar}
                         alt={testimonial.name}
                         width={64}

@@ -1,7 +1,6 @@
 import { Category } from "@/generated/prisma";
 import { MoveUpRightIcon } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { getCategories } from "@/actions/category";
 
 export default async function Popular() {
@@ -30,12 +29,10 @@ export default async function Popular() {
                 key={category.name}
                 className="group relative h-75 sm:h-87.5 md:h-100 overflow-hidden rounded-xl transition-all duration-300 border-2 border-transparent"
               >
-                <Image
+                <img
                   src={category.image}
                   alt={category.name}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent flex items-end p-6 md:p-8">
                   <div className="transform transition-transform duration-300 group-hover:-translate-y-2">
