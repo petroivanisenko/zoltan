@@ -6,14 +6,37 @@ import { Metadata } from "next";
 export default async function CatalogPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    sortBy?: string;
+    categoryIds?: string | string[];
+    minPrice?: string;
+    maxPrice?: string;
+  }>;
 }) {
-  const { page: pageParam } = await searchParams;
-  const page = parseInt(pageParam || "1", 10);
+  const params = await searchParams;
+  const page = parseInt(params.page || "1", 10);
   const limit = 9;
+  const sortBy =
+    (params.sortBy as "popular" | "price_asc" | "price_desc" | "new") ||
+    "popular";
+
+  const categoryIdsParam = params.categoryIds;
+  const categoryIds = categoryIdsParam
+    ? (Array.isArray(categoryIdsParam) ? categoryIdsParam : [categoryIdsParam])
+        .map(Number)
+        .filter(Boolean)
+    : [];
 
   const [productsData, categories, priceRange] = await Promise.all([
-    getFilteredProducts({ page, limit }),
+    getFilteredProducts({
+      page,
+      limit,
+      sortBy,
+      categoryIds,
+      minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+      maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+    }),
     getCategories(),
     getMinMaxPrices(),
   ]);

@@ -10,12 +10,21 @@ export default async function CategoryPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    sortBy?: string;
+    categoryIds?: string | string[];
+    minPrice?: string;
+    maxPrice?: string;
+  }>;
 }) {
   const { slug } = await params;
-  const { page: pageParam } = await searchParams;
-  const page = parseInt(pageParam || "1", 10);
+  const searchParamsResolved = await searchParams;
+  const page = parseInt(searchParamsResolved.page || "1", 10);
   const limit = 9;
+  const sortBy =
+    (searchParamsResolved.sortBy as "popular" | "price_asc" | "price_desc" | "new") ||
+    "popular";
 
   const category = await prisma.category.findFirst({
     where: { slug },
@@ -23,8 +32,22 @@ export default async function CategoryPage({
 
   if (!category) notFound();
 
+  const categoryIdsParam = searchParamsResolved.categoryIds;
+  const categoryIds = categoryIdsParam
+    ? (Array.isArray(categoryIdsParam) ? categoryIdsParam : [categoryIdsParam])
+        .map(Number)
+        .filter(Boolean)
+    : [category.id];
+
   const [productsData, categories, priceRange] = await Promise.all([
-    getFilteredProducts({ categoryIds: [category.id], page, limit }),
+    getFilteredProducts({
+      page,
+      limit,
+      sortBy,
+      categoryIds,
+      minPrice: searchParamsResolved.minPrice ? Number(searchParamsResolved.minPrice) : undefined,
+      maxPrice: searchParamsResolved.maxPrice ? Number(searchParamsResolved.maxPrice) : undefined,
+    }),
     getCategories(),
     getMinMaxPrices(),
   ]);
