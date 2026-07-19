@@ -234,7 +234,7 @@ export async function createProduct(formData: FormData) {
     throw new Error("Image is required");
   }
 
-  await prisma.product.create({
+  const product = await prisma.product.create({
     data: {
       ...data,
       image: imageUrl,
@@ -244,6 +244,7 @@ export async function createProduct(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/catalogue");
   revalidatePath("/admin/products");
+  revalidatePath(`/product/${product.id}`);
 }
 
 export async function updateProduct(id: number, formData: FormData) {
@@ -271,6 +272,7 @@ export async function updateProduct(id: number, formData: FormData) {
   revalidatePath("/");
   revalidatePath("/catalogue");
   revalidatePath("/admin/products");
+  revalidatePath(`/product/${id}`);
 }
 
 export async function deleteProduct(id: number) {
@@ -281,9 +283,27 @@ export async function deleteProduct(id: number) {
     revalidatePath("/");
     revalidatePath("/catalogue");
     revalidatePath("/admin/products");
+    revalidatePath(`/product/${id}`);
     return { success: true };
   } catch (error) {
     console.error("Error deleting product:", error);
     return { success: false, error: "Failed to delete product" };
+  }
+}
+
+export async function getProductsByIds(ids: number[]): Promise<ProductWithCategory[]> {
+  if (!ids || ids.length === 0) return [];
+  try {
+    return await prisma.product.findMany({
+      where: {
+        id: { in: ids },
+      },
+      include: {
+        category: true,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to get products by ids:", error);
+    return [];
   }
 }

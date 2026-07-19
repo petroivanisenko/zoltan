@@ -13,6 +13,7 @@ interface CartState {
   clearItems: () => void;
   openCart: () => void;
   closeCart: () => void;
+  syncCartItems: (updatedProducts: Product[]) => void;
 }
 
 const initialCart: Cart = {
@@ -111,6 +112,53 @@ export const useCartStore = create<CartState>()(
 
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
+
+      syncCartItems: (updatedProducts: Product[]) => {
+        const { cart } = get();
+        let changed = false;
+
+        const newItems = cart.items.map((item) => {
+          const matchingProduct = updatedProducts.find((p) => p.id === item.productId);
+          if (matchingProduct) {
+            const hasChanged =
+              item.product.price !== matchingProduct.price ||
+              item.product.inStock !== matchingProduct.inStock ||
+              item.product.name !== matchingProduct.name ||
+              item.product.image !== matchingProduct.image ||
+              item.product.discount !== matchingProduct.discount;
+
+            if (hasChanged) {
+              changed = true;
+              return {
+                ...item,
+                product: matchingProduct,
+              };
+            }
+          } else {
+            // Product was deleted from database
+            if (item.product.inStock) {
+              changed = true;
+              return {
+                ...item,
+                product: { ...item.product, inStock: false },
+              };
+            }
+          }
+          return item;
+        });
+
+        if (changed) {
+          const newCart = {
+            items: newItems,
+            totalItems: newItems.reduce((sum, item) => sum + item.quantity, 0),
+            totalPrice: newItems.reduce(
+              (sum, item) => sum + item.product.price * item.quantity,
+              0,
+            ),
+          };
+          set({ cart: newCart });
+        }
+      },
     }),
     {
       name: "cart-storage",

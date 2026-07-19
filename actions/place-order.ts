@@ -1,8 +1,10 @@
 "use server";
 
 import nodemailer from "nodemailer";
+import prisma from "@/lib/prisma";
 
 type OrderItem = {
+  productId?: number;
   product: {
     name: string;
     price: number;
@@ -40,6 +42,33 @@ export async function placeOrder(data: PlaceOrderParams) {
   const orderId = `ORD-${Date.now()}`;
 
   try {
+    // Validate that all items are in stock in the database
+    const productIds = items.map((item) => item.productId).filter((id): id is number => typeof id === "number");
+    if (productIds.length > 0) {
+      const dbProducts = await prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, inStock: true, name: true }
+      });
+      
+      const outOfStockProducts = dbProducts.filter((p) => !p.inStock);
+      if (outOfStockProducts.length > 0) {
+        const names = outOfStockProducts.map((p) => p.name).join(", ");
+        return {
+          success: false,
+          error: `The following items are out of stock: ${names}. Please remove them from your cart.`
+        };
+      }
+      
+      const foundIds = dbProducts.map((p) => p.id);
+      const missingIds = productIds.filter((id) => !foundIds.includes(id));
+      if (missingIds.length > 0) {
+        return {
+          success: false,
+          error: "Some items in your cart are no longer available. Please clear your cart and try again."
+        };
+      }
+    }
+
     // Check if SMTP is configured
     if (!process.env.SMTP_HOST) {
       console.log("SMTP not configured. Simulating email sending.");

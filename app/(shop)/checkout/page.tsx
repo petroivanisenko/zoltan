@@ -49,6 +49,8 @@ export default function CheckoutPage() {
     0,
   );
 
+  const hasOutOfStockItems = cart.items.some((item) => !item.product.inStock);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -60,6 +62,12 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (hasOutOfStockItems) {
+      toast.error("Checkout Disabled", {
+        description: "Please remove out of stock items from your cart before proceeding.",
+      });
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -84,7 +92,7 @@ export default function CheckoutPage() {
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong", {
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "Please try again later.",
       });
     } finally {
       setIsSubmitting(false);
@@ -283,12 +291,22 @@ export default function CheckoutPage() {
                   </AlertDescription>
                 </Alert>
 
+                {hasOutOfStockItems && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Checkout Disabled</AlertTitle>
+                    <AlertDescription>
+                      Some items in your cart are out of stock. Please remove them to proceed.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="flex gap-4">
                   <Link href="/" className="w-full">
                     <Button
                       type="button"
                       variant="destructive"
-                      className="w-fit"
+                      className="w-full"
                       size="lg"
                     >
                       Cancel
@@ -296,9 +314,9 @@ export default function CheckoutPage() {
                   </Link>
                   <Button
                     type="submit"
-                    className="w-fit"
+                    className="w-full"
                     size="lg"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || hasOutOfStockItems}
                   >
                     <ShoppingCart />
                     {isSubmitting ? "Placing Order..." : "Place Order"}
